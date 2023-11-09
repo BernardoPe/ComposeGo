@@ -31,5 +31,4 @@ build/
 gradle/
 gradlew
 gradlew.*
-TicTacToe/saves/scnd.txt
-TicTacToe/saves/first.txt
+
