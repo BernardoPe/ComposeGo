@@ -1,3 +1,3 @@
 package go.model
 
-class Points<T>(white : T, black : T)
+class Points<T>(val white : T, val black : T) {}

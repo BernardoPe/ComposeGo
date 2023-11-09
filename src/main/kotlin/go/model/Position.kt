@@ -7,7 +7,7 @@ fun main() {
     pos.getAdjacents().forEach{
         println("${it.col}, ${it.row}")
     }
-    val pos2 = getPosition("1a")
+    val pos2 = getPosition("a1")
     println("${pos2.col}, ${pos2.row}")
 }
 
@@ -72,13 +72,13 @@ fun getRowIndex(num : Int) : Int {
 
 fun getPosition(str : String) : Position {
     if(BOARD_DIM.size <= 9) {
-        require(str.length == 2 && str[0].isDigit() && str[1].isLetter()) {"Invalid Position"}
-        return Position(getColIndex(str[1].uppercaseChar()), getRowIndex(str[0].digitToInt()))
+        require(str.length == 2 && str[0].isLetter() && str[1].isDigit()) {"Invalid Position"}
+        return Position(getColIndex(str[0].uppercaseChar()), getRowIndex(str[1].digitToInt()))
     }
     else {
-        require(str.length == 2 && str[0].isDigit() && str[1].isLetter() || str.length == 3 && str[0].isDigit() && str[1].isDigit() && str[2].isLetter() ) {"Invalid Position"}
-        return if(str.length == 2) Position(getColIndex(str[1].uppercaseChar()), getRowIndex(str[0].digitToInt()))
-        else Position(getColIndex(str[2].uppercaseChar()), getRowIndex("${str[0]}${str[1]}".toInt()))
+        require(str.length == 2 && str[0].isLetter() && str[1].isDigit() || str.length == 3 && str[0].isLetter() && str[1].isDigit() && str[2].isDigit() ) {"Invalid Position"}
+        return if(str.length == 2) Position(getColIndex(str[0].uppercaseChar()), getRowIndex(str[1].digitToInt()))
+        else Position(getColIndex(str[0].uppercaseChar()), getRowIndex("${str[1]}${str[2]}".toInt()))
     }
 }
 

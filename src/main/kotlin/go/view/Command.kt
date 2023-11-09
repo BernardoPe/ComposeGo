@@ -12,12 +12,12 @@ object Play: Command("play") {
     override fun execute(args: List<String>, game : Board) : Board {
         val arg = requireNotNull(args.firstOrNull()){"Missing Position"}
         val pos = getPosition(arg)
-        requireNotNull(game.cells[pos]) {"Position ${arg.uppercase()} used"}
+        require(game.cells[pos] == null) {"Position ${arg.uppercase()} used"}
         return game.play(pos)
     }
 }
 
-fun getCommands(storage: Storage<String, Board>) : Map<String,Command> {
+fun getCommands() : Map<String,Command> {
     return mapOf<String, Command> (
         "PLAY" to Play,
         "PASS" to object: Command() {

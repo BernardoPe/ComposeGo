@@ -31,17 +31,19 @@ fun Board.play(pos: Position) : Board {
     return when (this) {
         is BoardPass -> {
             val newBoardCells = cells + (pos to this.turn)
+            println(pos.getPosGroup(cells, turn))
             BoardRun(newBoardCells, cells, turn.other, currPoints)
         }
         is BoardRun -> {
             val newBoardCells = cells + (pos to this.turn)
+            println(pos.getPosGroup(cells, turn))
             BoardRun(newBoardCells, cells, turn.other, currPoints)
         }
         is BoardFinish -> error("Game Over")
     }
 }
 
-fun newBoard() = BoardRun(emptyMap(), emptyMap(), Stone.BLACK, Points<Int>(0,0))
+fun newBoard() = BoardRun(emptyMap(), emptyMap(), Stone.Black, Points<Int>(0,0))
 
 fun Board.pass() : Board {
     return when(this) {
@@ -53,6 +55,28 @@ fun Board.pass() : Board {
         is BoardRun -> BoardPass(cells, prevCells, turn, currPoints)
 
     }
+}
+
+fun Position.getPosGroup(board: BoardCells, player: Stone): Set<Position> {
+    val visitedPositions = mutableSetOf<Position>()
+    val positionsToCheck = mutableSetOf(this)
+    val group = mutableSetOf<Position>()
+
+    while (positionsToCheck.isNotEmpty()) {
+        val currentPos = positionsToCheck.first()
+        positionsToCheck.remove(currentPos)
+        visitedPositions.add(currentPos)
+        group.add(currentPos)
+
+        // Check adjacent positions for stones and add them to the positions to be checked
+        currentPos.getAdjacents().forEach { adjPos ->
+            if (board[Position(adjPos.index)] != null && adjPos !in visitedPositions && board[Position(adjPos.index)] == player) {
+                positionsToCheck.add(adjPos)
+            }
+        }
+    }
+
+    return group
 }
 
 fun calculateFinalScore(cells: BoardCells, currPoints: Points<Int>): Points<Float> {
