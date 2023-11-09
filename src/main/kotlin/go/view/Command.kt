@@ -2,6 +2,8 @@ package go.view
 
 import go.model.*
 import java.util.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 abstract class Command(val arg : String = "") {
     open fun execute(args : List<String>, game : Board): Board = throw IllegalStateException("Game Over")
@@ -9,12 +11,13 @@ abstract class Command(val arg : String = "") {
 }
 
 object Play: Command("play") {
-    override fun execute(args: List<String>, game : Board) : Board {
-        val arg = requireNotNull(args.firstOrNull()){"Missing Position"}
-        val pos = getPosition(arg)
-        require(game.cells[pos] == null) {"Position ${arg.uppercase()} used"}
-        return game.play(pos)
-    }
+        override fun execute(args: List<String>, game: Board): Board {
+            val arg = requireNotNull(args.firstOrNull()) { "Missing Position" }
+            val pos = getPosition(arg)
+            require(game.cells[pos] == null) { "Position ${arg.uppercase()} used" }
+            return game.play(pos)
+        }
+
 }
 
 fun getCommands() : Map<String,Command> {
@@ -27,7 +30,7 @@ fun getCommands() : Map<String,Command> {
         },
         "NEW" to object : Command() {
             override fun execute(args: List<String>, game : Board): Board {
-                TODO()
+                return newBoard()
             }
         },
         "SAVE" to object: Command() {

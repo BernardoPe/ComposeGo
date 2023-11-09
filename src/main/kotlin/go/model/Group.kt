@@ -1,8 +1,4 @@
 package go.model
-
-fun main() {
-    val pos = Position(0)
-    val group = Group(setOf(Position(0), Position(1)), Stone.White)
+class Group(val positions : Set<Position>, val player: Stone) {
+    val size get() = positions.size
 }
-
-class Group(positions : Set<Position>, player: Stone)

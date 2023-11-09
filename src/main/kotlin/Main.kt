@@ -1,5 +1,5 @@
-import go.model.Board
-import go.model.newBoard
+
+import go.model.*
 import go.view.getCommands
 import go.view.readCmdLine
 import go.view.show
@@ -22,6 +22,5 @@ fun main() {
                 println(e.message)
             }
         }
-
     }
 }

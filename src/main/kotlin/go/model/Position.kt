@@ -1,16 +1,4 @@
 package go.model
-
-
-fun main() {
-    val pos = Position(80)
-    println("${pos.col}, ${pos.row}")
-    pos.getAdjacents().forEach{
-        println("${it.col}, ${it.row}")
-    }
-    val pos2 = getPosition("a1")
-    println("${pos2.col}, ${pos2.row}")
-}
-
 @JvmInline
 value class Position private constructor(val index: Int) {
 
@@ -33,7 +21,7 @@ value class Position private constructor(val index: Int) {
 
         operator fun invoke(row : Int, col : Int) : Position {
             require(col in 0 until BOARD_DIM.size && row in 0 until BOARD_DIM.size) {"Out of bounds"}
-            return values[getIndex(row,col)]
+            return values[getIndex(col,row)]
         }
 
         private fun getIndex(col: Int, row: Int): Int {
@@ -54,6 +42,7 @@ value class Position private constructor(val index: Int) {
 
 }
 
+
 fun isValidCol(ch : Char) : Boolean = ch in 'A' until 'A' + BOARD_DIM.size
 
 fun isValidRow(num : Int) : Boolean = num - 1 in 0 until BOARD_DIM.size
@@ -73,17 +62,20 @@ fun getRowIndex(num : Int) : Int {
 fun getPosition(str : String) : Position {
     if(BOARD_DIM.size <= 9) {
         require(str.length == 2 && str[0].isLetter() && str[1].isDigit()) {"Invalid Position"}
-        return Position(getColIndex(str[0].uppercaseChar()), getRowIndex(str[1].digitToInt()))
+        return Position(getRowIndex(str[1].digitToInt()),  getColIndex(str[0].uppercaseChar()))
     }
     else {
         require(str.length == 2 && str[0].isLetter() && str[1].isDigit() || str.length == 3 && str[0].isLetter() && str[1].isDigit() && str[2].isDigit() ) {"Invalid Position"}
-        return if(str.length == 2) Position(getColIndex(str[0].uppercaseChar()), getRowIndex(str[1].digitToInt()))
-        else Position(getColIndex(str[0].uppercaseChar()), getRowIndex("${str[1]}${str[2]}".toInt()))
+        return if(str.length == 2) Position(getRowIndex(str[1].digitToInt()), getColIndex(str[0].uppercaseChar()))
+        else Position(getRowIndex("${str[1]}${str[2]}".toInt()),getColIndex(str[0].uppercaseChar()) )
     }
 }
 
+fun Position.String() : String = "${ 'A' + col }${ BOARD_DIM.size - row }"
+
+
 operator fun Position.plus(dir: Direction) : Position? {
-    val coordsSum = Pair(this.col + dir.dx, this.row + dir.dy)
+    val coordsSum = Pair(this.row + dir.dy, this.col + dir.dx)
     return if(isValidPos(coordsSum.first, coordsSum.second)) Position(coordsSum.first, coordsSum.second) else null
 }
 
