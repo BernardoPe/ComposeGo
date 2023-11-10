@@ -2,7 +2,7 @@ package go.view
 
 import go.model.*
 
-fun getColLetters() : List<Char> =  buildList { (0 until BOARD_DIM.size).forEach{ add('A' + it) } }
+fun getColLetters() : List<Char> =  buildList { (0 until BOARD_SIZE.size).forEach{ add('A' + it) } }
 
 
 fun Board.show() {
@@ -10,10 +10,10 @@ fun Board.show() {
     Position.values.forEach { pos ->
         when (pos.col) {
             0 -> {
-                if(BOARD_DIM.size - (pos.row) <= 9) print("${BOARD_DIM.size - pos.row}  ${cells[pos]?.char ?: '.'}")
-                else print("${BOARD_DIM.size - pos.row} ${cells[pos]?.char ?: '.'}")
+                if(BOARD_SIZE.size - (pos.row) <= 9) print("${BOARD_SIZE.size - pos.row}  ${cells[pos]?.char ?: '.'}")
+                else print("${BOARD_SIZE.size - pos.row} ${cells[pos]?.char ?: '.'}")
             }
-            BOARD_DIM.size-1 -> println(" ${cells[pos]?.char ?: '.'}")
+            BOARD_SIZE.size-1 -> println(" ${cells[pos]?.char ?: '.'}")
             else -> print(" ${cells[pos]?.char ?: '.'}")
         }
 
