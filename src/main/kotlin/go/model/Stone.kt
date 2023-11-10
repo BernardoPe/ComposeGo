@@ -12,4 +12,4 @@ enum class Stone(val char: Char) {
 }
 
 
-fun String.toStone() = Stone.valueOf(this )
+fun String.toStone() = Stone.valueOf(this)

@@ -61,15 +61,15 @@ value class Position private constructor(val index: Int) {
 
     private fun computeGroup(position: Position, board: Map<Position, Stone>, player: Stone?, group: Set<Position>): Set<Position> {
 
-        val newGroup = group + position
+        var newGroup = group + position
 
         position.getAdjacents().forEach {
-            if (it !in group && board[it] == player)
-                return computeGroup(it, board, player, newGroup)
+            if (it !in group && board[it] == player) {
+                newGroup += computeGroup(it, board, player, newGroup)
+            }
         }
 
         return newGroup
-
     }
 
 

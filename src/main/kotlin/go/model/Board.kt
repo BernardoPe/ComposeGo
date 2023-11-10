@@ -39,7 +39,7 @@ sealed class Board(val cells : BoardCells) {
     fun pass() : Board {
         return when(this) {
             is BoardFinish -> throw IllegalStateException("Game Over")
-            is BoardPass -> BoardFinish(this.cells, calculateFinalScore(this.cells, this.currPoints))
+            is BoardPass -> BoardFinish(cells, calculateFinalScore(cells, currPoints))
             is BoardRun -> BoardPass(cells, prevCells, turn.other, currPoints)
         }
     }
