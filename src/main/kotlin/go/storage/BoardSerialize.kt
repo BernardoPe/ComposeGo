@@ -2,28 +2,15 @@ package go.storage
 
 import go.model.*
 
-/**
- * Implements the Serializer interface
- */
-object BoardSerialize : Serializer<Board> {
 
-    /**
-     * Serializes a Board object into a string representation.
-     * @param data represents the Board object to be serialized.
-     * @return String representation of the serialized Board object.
-     */
+object BoardSerialize : Serializer<Board> {
     override fun serialize(data: Board): String =
         when (data) {
-            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + getBoardCellsString(data.prevCells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
-            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + getBoardCellsString(data.prevCells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
+            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
             is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
-    /**
-     * Serializes the BoardCells into a string.
-     * @param cells represents the BoardCells to be serialized.
-     * @return String representation of the serialized BoardCells.
-     */
 
     private fun getBoardCellsString(cells: BoardCells): String {
         val result = StringBuilder()
@@ -35,12 +22,6 @@ object BoardSerialize : Serializer<Board> {
         return result.toString().trim()
     }
 
-    /**
-     * Deserializes a string into a Board object.
-     * @param text represents the serialized string of the Board.
-     * @return deserialized Board object.
-     * @throws IllegalArgumentException if the board type is invalid
-     */
     override fun deserialize(text: String): Board {
         val lines = text.split("\n")
         val type = lines[0].trim()
@@ -49,36 +30,28 @@ object BoardSerialize : Serializer<Board> {
 
         return when (type) {
             "Pass" -> {
-                val prevCells = deserializeBoardCells(lines[2].trim())
-                val turn = lines[3].trim().toStone()
-                val points = lines[4].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
-                BoardPass(cells, prevCells, turn, points)
+                val turn = lines[2].trim().toStone()
+                val points = lines[3].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
+                BoardPass(cells, emptyMap(), turn, points)
             }
             "Run" -> {
-                val prevCells = deserializeBoardCells(lines[2].trim())
-                val turn = lines[3].trim().toStone()
-                val points = lines[4].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
-                BoardRun(cells, prevCells, turn, points)
+                val turn = lines[2].trim().toStone()
+                val points = lines[3].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
+                BoardRun(cells, emptyMap(), turn, points)
             }
             "Finish" -> {
-                val scores = lines[2].split(" ").let { Points(it[0].toDouble(), it[1].toDouble()) }
+                val scores = lines[2].split(" ").let { Points(it[0].toFloat(), it[1].toFloat()) }
                 BoardFinish(cells, scores)
             }
             else -> throw IllegalArgumentException("Invalid board type")
         }
     }
 
-    /**
-     * Deserializes a string representation of BoardCells into a BoardCells object.
-     * @param cellsString represents the string of BoardCells
-     * @return deserialized BoardCells object.
-     */
-
     private fun deserializeBoardCells(cellsString: String): BoardCells {
 
-        var cells = mapOf<Position, Stone>()
+        val cells = mutableListOf<Pair<Position, Stone>>()
 
-        if(!cellsString.any{it == ':'}) return cells
+        if(!cellsString.any{it == ':'}) return cells.toMap()
 
         val cellList = cellsString.split(" ")
 
@@ -86,11 +59,47 @@ object BoardSerialize : Serializer<Board> {
             val (index, stoneStr) = cell.split(":")
             val position = Position(index.toInt())
             val stone = Stone.valueOf(stoneStr)
-            cells = cells + (position to stone)
+            cells.add(position to stone)
         }
 
-        return cells
+        return cells.toMap()
     }
+
+
+}
+
+
+fun main() {
+    val cells = mapOf(
+        Position(0, 0) to Stone.Black,
+        Position(1, 1) to Stone.White,
+        Position(2, 2) to Stone.Black
+        // Add more entries as needed
+    )
+
+    val boardPass = BoardPass(cells, emptyMap(), Stone.Black, Points(0, 0))
+    val boardRun = BoardRun(cells, emptyMap(), Stone.White, Points(0, 0))
+    val boardFinish = BoardFinish(cells, Points(10f, 20f))
+
+    val boardPassSerialized = BoardSerialize.serialize(boardPass)
+    val boardRunSerialized = BoardSerialize.serialize(boardRun)
+    val boardFinishSerialized = BoardSerialize.serialize(boardFinish)
+
+    println( boardPassSerialized)
+    println("\n")
+    println(boardRunSerialized)
+    println("\n")
+    println(boardFinishSerialized)
+
+    val board1 = BoardSerialize.deserialize(boardPassSerialized)
+    val board2 = BoardSerialize.deserialize(boardRunSerialized)
+    val board3 = BoardSerialize.deserialize(boardFinishSerialized)
+    println(board1)
+    println("\n")
+    println(board2)
+    println("\n")
+    println(board3)
+
 
 
 }

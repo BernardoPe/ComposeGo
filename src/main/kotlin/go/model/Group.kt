@@ -34,15 +34,13 @@ class Group(val positions : Set<Position>, val player: Stone?) {
     fun getAdjacentGroups(board: BoardCells, type : Stone?): Set<Group> {
 
         var adjacentGroups = setOf<Group>()
-        var checkedPositions = setOf<Position>()
 
         for (pos in positions) {
             pos.getAdjacents().forEach { adjPos ->
-                if (board[adjPos] == type && adjPos !in checkedPositions) {
+                if (board[adjPos] == type && adjacentGroups.all{ !it.positions.contains(adjPos) }) {
                     val adjGroup = adjPos.getPosGroup(board, board[adjPos])
                     if (adjGroup.positions.isNotEmpty()) {
                         adjacentGroups = adjacentGroups + adjGroup
-                        checkedPositions = checkedPositions + adjGroup.positions
                     }
                 }
             }
