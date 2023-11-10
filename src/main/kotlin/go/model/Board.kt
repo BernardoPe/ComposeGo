@@ -62,7 +62,7 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val turn : St
 
                 newCells = newCells - adjGroup
 
-                currPoints = if(turn == Stone.White)
+                currPoints = if(turn == Stone.WHITE)
                     Points(currPoints.white + adjGroup.size, currPoints.black)
                 else
                     Points(currPoints.white, currPoints.black + adjGroup.size)
@@ -87,7 +87,7 @@ class BoardPass(cells : BoardCells, prevCells: BoardCells, turn: Stone, currPoin
 
 class BoardFinish(cells : BoardCells, val score : Points<Float>) : Board(cells)
 
-fun newBoard() = BoardRun(emptyMap(), emptyMap(), Stone.Black, Points(0,0))
+fun newBoard() = BoardRun(emptyMap(), emptyMap(), Stone.BLACK, Points(0,0))
 
 fun getEmptyAreas(board: BoardCells): Set<Group> {
 
@@ -106,11 +106,11 @@ fun getEmptyAreas(board: BoardCells): Set<Group> {
 
 fun getPlayerFromArea(area: Group, boardCells: BoardCells): Stone? {
 
-    val whiteGroups = area.getAdjacentGroups(boardCells, Stone.White)
-    val blackGroups = area.getAdjacentGroups(boardCells, Stone.Black)
+    val whiteGroups = area.getAdjacentGroups(boardCells, Stone.WHITE)
+    val blackGroups = area.getAdjacentGroups(boardCells, Stone.BLACK)
 
-    return if(whiteGroups.isNotEmpty() && blackGroups.isEmpty()) Stone.White
-    else if (blackGroups.isNotEmpty() && whiteGroups.isEmpty()) Stone.Black
+    return if(whiteGroups.isNotEmpty() && blackGroups.isEmpty()) Stone.WHITE
+    else if (blackGroups.isNotEmpty() && whiteGroups.isEmpty()) Stone.BLACK
     else null
 
 }
@@ -124,8 +124,8 @@ fun calculateFinalScore(cells: BoardCells, currPoints: Points<Int>): Points<Floa
 
     for (area in emptyAreas) {
         when (getPlayerFromArea(area, cells)) {
-            Stone.Black -> blackTerritory += area.size
-            Stone.White -> whiteTerritory += area.size
+            Stone.BLACK -> blackTerritory += area.size
+            Stone.WHITE -> whiteTerritory += area.size
             else -> continue
         }
     }

@@ -6,9 +6,9 @@ package go.model
  * @property char the character by which the Stone is represented in the board.
  */
 enum class Stone(val char: Char) {
-    Black('#'), White('O');
+    BLACK('#'), WHITE('O');
 
-    val other get() = if (this == Black) White else Black
+    val other get() = if (this == BLACK) WHITE else BLACK
 }
 
 

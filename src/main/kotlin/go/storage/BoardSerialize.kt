@@ -6,8 +6,8 @@ import go.model.*
 object BoardSerialize : Serializer<Board> {
     override fun serialize(data: Board): String =
         when (data) {
-            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
-            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
+            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.white + " "+ data.currPoints.black
             is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
@@ -71,14 +71,14 @@ object BoardSerialize : Serializer<Board> {
 
 fun main() {
     val cells = mapOf(
-        Position(0, 0) to Stone.Black,
-        Position(1, 1) to Stone.White,
-        Position(2, 2) to Stone.Black
+        Position(0, 0) to Stone.BLACK,
+        Position(1, 1) to Stone.WHITE,
+        Position(2, 2) to Stone.BLACK
         // Add more entries as needed
     )
 
-    val boardPass = BoardPass(cells, emptyMap(), Stone.Black, Points(0, 0))
-    val boardRun = BoardRun(cells, emptyMap(), Stone.White, Points(0, 0))
+    val boardPass = BoardPass(cells, emptyMap(), Stone.BLACK, Points(0, 0))
+    val boardRun = BoardRun(cells, emptyMap(), Stone.WHITE, Points(0, 0))
     val boardFinish = BoardFinish(cells, Points(10f, 20f))
 
     val boardPassSerialized = BoardSerialize.serialize(boardPass)
