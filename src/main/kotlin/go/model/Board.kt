@@ -4,6 +4,12 @@ package go.model
 val BOARD_SIZE = BoardDimension.SMALL
 
 typealias BoardCells = Map<Position, Stone>
+
+
+/**
+ * Represents the board in the Go Game
+ * @property cells The moves made by players in the game
+ */
 sealed class Board(val cells : BoardCells) {
     override fun equals(other: Any?): Boolean {
         return other is Board && cells == other.cells
@@ -13,14 +19,23 @@ sealed class Board(val cells : BoardCells) {
         return cells.hashCode()
     }
 
+    /**
+     * Updates the game state. If the game has ended and this function is called, there will be an error.
+     * @return A new board with the updated game state
+     *
+     */
     fun play(pos: Position) : Board {
         return when (this) {
-            is BoardPass -> BoardFinish(cells, calculateFinalScore(cells, currPoints))
+            is BoardPass -> validatePlay(pos)
             is BoardRun -> validatePlay(pos)
             is BoardFinish -> error("Game Over")
         }
     }
 
+    /**
+     * Passes a turn.
+     * @return The same board if the previous turn wasn't a pass, or a Board representing the finished game state if this
+     */
     fun pass() : Board {
         return when(this) {
             is BoardFinish -> throw IllegalStateException("Game Over")
@@ -39,18 +54,18 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val turn : St
     fun validatePlay(pos: Position): Board {
 
         var newCells = cells + (pos to turn)
-        val group = pos.getPosGroup(cells, turn)
+        val group = pos.getPosGroup(newCells, turn)
 
-        group.getAdjacentGroups(newCells).forEach{adjGroup ->
+        group.getAdjacentGroups(newCells, turn.other).forEach{adjGroup ->
 
             if (!adjGroup.hasLiberties(newCells)) {
 
                 newCells = newCells - adjGroup
 
-                if(turn == Stone.White)
-                    currPoints = Points(currPoints.white + adjGroup.size, currPoints.black)
+                currPoints = if(turn == Stone.White)
+                    Points(currPoints.white + adjGroup.size, currPoints.black)
                 else
-                    currPoints = Points(currPoints.white, currPoints.black + adjGroup.size)
+                    Points(currPoints.white, currPoints.black + adjGroup.size)
 
             }
 
@@ -64,14 +79,6 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val turn : St
 
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + prevCells.hashCode()
-        result = 31 * result + turn.hashCode()
-        result = 31 * result + currPoints.hashCode()
-        return result
-    }
-
 }
 
 operator fun BoardCells.minus(group: Group): BoardCells = this.filterKeys { position -> position !in group.positions }.toMap()
@@ -82,44 +89,30 @@ class BoardFinish(cells : BoardCells, val score : Points<Float>) : Board(cells)
 
 fun newBoard() = BoardRun(emptyMap(), emptyMap(), Stone.Black, Points(0,0))
 
-fun getEmptyAreas(board: BoardCells): Set<Set<Position>> {
+fun getEmptyAreas(board: BoardCells): Set<Group> {
 
-    val emptyAreas = mutableSetOf<Set<Position>>()
-    val emptyCells = Position.values.minus(board.keys).toMutableSet()
+    var emptyAreas = setOf<Group>()
+    var emptyCells = Position.values.minus(board.keys)
 
     while(emptyCells.isNotEmpty()) {
-        val area = mutableSetOf<Position>()
-        findEmptyArea(emptyCells, emptyCells.first(), area)
-        emptyAreas.add(area)
+        val area = emptyCells.first().getPosGroup(board, null)
+        emptyAreas = emptyAreas + area
+        emptyCells = emptyCells - area.positions
     }
 
     return emptyAreas
-}
-private fun findEmptyArea(emptyCells: MutableSet<Position>, position: Position, area: MutableSet<Position>) {
-
-    emptyCells.remove(position)
-    area.add(position)
-
-    position.getAdjacents().forEach { pos ->
-        if(emptyCells.contains(pos)) findEmptyArea(emptyCells, pos, area)
-    }
 
 }
-fun getPlayerFromArea(area: Set<Position>, boardCells: BoardCells): Stone? {
-    val adjacentPlayers = mutableSetOf<Stone>()
 
-    for (pos in area) {
-        pos.getAdjacents().forEach { adjPos ->
-            val cell = boardCells[Position(adjPos.index)]
-            if (cell != null) {
-                adjacentPlayers.add(cell)
-                if(adjacentPlayers.size == 2) return  null
-            }
-        }
-    }
+fun getPlayerFromArea(area: Group, boardCells: BoardCells): Stone? {
 
-    return if (adjacentPlayers.size == 1) adjacentPlayers.first()
+    val whiteGroups = area.getAdjacentGroups(boardCells, Stone.White)
+    val blackGroups = area.getAdjacentGroups(boardCells, Stone.Black)
+
+    return if(whiteGroups.isNotEmpty() && blackGroups.isEmpty()) Stone.White
+    else if (blackGroups.isNotEmpty() && whiteGroups.isEmpty()) Stone.Black
     else null
+
 }
 
 fun calculateFinalScore(cells: BoardCells, currPoints: Points<Int>): Points<Float> {
@@ -130,8 +123,7 @@ fun calculateFinalScore(cells: BoardCells, currPoints: Points<Int>): Points<Floa
     var whiteTerritory = 0
 
     for (area in emptyAreas) {
-        val player = getPlayerFromArea(area, cells)
-        when (player) {
+        when (getPlayerFromArea(area, cells)) {
             Stone.Black -> blackTerritory += area.size
             Stone.White -> whiteTerritory += area.size
             else -> continue

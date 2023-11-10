@@ -21,8 +21,8 @@ class TextFileStorage<Key, Data>(val baseDirectory: String, private val serializ
 
     override fun read(key: Key): Data? =
         path(key).let {
-            try { serializer.deserialize(it.readText()) }
-            catch (e: NoSuchFileException) { null }
+            check(it.exists()) { "File $key does not exist" }
+            serializer.deserialize(it.readText())
         }
 
 

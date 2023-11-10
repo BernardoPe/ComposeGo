@@ -13,7 +13,6 @@ class BoardTest {
             Position(0, 0) to Stone.Black,
             Position(1, 1) to Stone.White,
             Position(2, 2) to Stone.Black
-            // Add more entries as needed
         )
 
         val boardPass = BoardPass(cells, emptyMap(), Stone.Black, Points(0, 0))
@@ -22,7 +21,7 @@ class BoardTest {
 
         val expectedPassString = "Pass\n0:BLACK 1:WHITE 2:BLACK\nBLACK\n0 0"
         val expectedRunString = "Run\n0:BLACK 1:WHITE 2:BLACK\nWHITE\n0 0"
-        val expectedFinishString = "Finish \n0:BLACK 1:WHITE 2:BLACK\n10.0 20.0"
+        val expectedFinishString = "Finish\n0:BLACK 1:WHITE 2:BLACK\n10.0 20.0"
 
         assertEquals(expectedPassString, serialize(boardPass))
         assertEquals(expectedRunString, serialize(boardRun))

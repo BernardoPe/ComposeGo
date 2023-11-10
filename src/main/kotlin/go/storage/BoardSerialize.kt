@@ -6,14 +6,13 @@ import go.model.*
 object BoardSerialize : Serializer<Board> {
     override fun serialize(data: Board): String =
         when (data) {
-            is BoardPass -> "Pass\n" + printBoardCells(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
-            is BoardRun -> "Run\n" + printBoardCells(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
-            is BoardFinish -> "Finish \n" + printBoardCells(data.cells) + "\n" + data.score.black +" "+ data.score.white
-
+            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
+            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.black + " "+ data.currPoints.white
+            is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
 
-    private fun printBoardCells(cells: BoardCells): String {
+    private fun getBoardCellsString(cells: BoardCells): String {
         val result = StringBuilder()
 
         for ((pos, stone) in cells) {
@@ -26,7 +25,6 @@ object BoardSerialize : Serializer<Board> {
     override fun deserialize(text: String): Board {
         val lines = text.split("\n")
         val type = lines[0].trim()
-
         val cellsString = lines[1].trim()
         val cells = deserializeBoardCells(cellsString)
 
@@ -50,8 +48,12 @@ object BoardSerialize : Serializer<Board> {
     }
 
     private fun deserializeBoardCells(cellsString: String): BoardCells {
-        val cellList = cellsString.split(" ")
+
         val cells = mutableListOf<Pair<Position, Stone>>()
+
+        if(!cellsString.any{it == ':'}) return cells.toMap()
+
+        val cellList = cellsString.split(" ")
 
         for (cell in cellList) {
             val (index, stoneStr) = cell.split(":")

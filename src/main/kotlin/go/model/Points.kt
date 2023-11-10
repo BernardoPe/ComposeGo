@@ -1,3 +1,7 @@
 package go.model
 
-class Points<T>(var white : T, val black : T) 
+
+/**
+ * Represents the points in the Go game
+ */
+class Points<T>(val white : T, val black : T)
