@@ -6,7 +6,7 @@ data class CommandLine  (
 )
 
 fun readCmdLine() : CommandLine {
-    print(">")
+    print("> ")
     val line = readln().split(" ").filter{ it.isNotBlank() }
     return if(line.isEmpty()) readCmdLine() else CommandLine(line.first().uppercase(), line.drop(1))
 }

@@ -1,12 +1,15 @@
 
 import go.model.*
+import go.storage.BoardSerialize
+import go.storage.TextFileStorage
 import go.view.getCommands
 import go.view.readCmdLine
 import go.view.show
 
 fun main() {
     var board: Board = newBoard()
-    val commands = getCommands()
+    val storage = TextFileStorage<String, Board>("saves", BoardSerialize)
+    val commands = getCommands(storage)
     while (true) {
         board.show()
         val (name, args) = readCmdLine()
