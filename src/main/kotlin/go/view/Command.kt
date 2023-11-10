@@ -13,21 +13,13 @@ abstract class Command(val arg : String = "") {
 }
 
 object Play: Command("play") {
-        @OptIn(ExperimentalTime::class)
+
         override fun execute(args: List<String>, game: Board): Board {
-            val time = measureTime {
                 require(game !is BoardFinish) { "Game Over" }
                 val arg = requireNotNull(args.firstOrNull()) { "Missing Position" }
                 val pos = getPosition(arg)
                 require(game.cells[pos] == null) { "Position ${arg.uppercase()} used" }
-                game.play(pos)
-            }
-            println(time)
-            require(game !is BoardFinish) { "Game Over" }
-            val arg = requireNotNull(args.firstOrNull()) { "Missing Position" }
-            val pos = getPosition(arg)
-            require(game.cells[pos] == null) { "Position ${arg.uppercase()} used" }
-            return game.play(pos)
+                return game.play(pos)
         }
 
 }
