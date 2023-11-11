@@ -2,8 +2,16 @@ package go.storage
 
 import go.model.*
 
-
+/**
+ * Object that implements the Serializer interface
+ */
 object BoardSerialize : Serializer<Board> {
+
+    /**
+     * Serializes a Board object into a string representation.
+     * @param data represents the Board object to be serialized.
+     * @return String representation of the serialized Board object.
+     */
     override fun serialize(data: Board): String =
         when (data) {
             is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
@@ -11,6 +19,11 @@ object BoardSerialize : Serializer<Board> {
             is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
+    /**
+     * Serializes the BoardCells into a string.
+     * @param cells represents the BoardCells to be serialized.
+     * @return String representation of the serialized BoardCells.
+     */
 
     private fun getBoardCellsString(cells: BoardCells): String {
         val result = StringBuilder()
@@ -22,6 +35,12 @@ object BoardSerialize : Serializer<Board> {
         return result.toString().trim()
     }
 
+    /**
+     * Deserializes a string into a Board object.
+     * @param text represents the serialized string of the Board.
+     * @return deserialized Board object.
+     * @throws IllegalArgumentException if the board type is invalid
+     */
     override fun deserialize(text: String): Board {
         val lines = text.split("\n")
         val type = lines[0].trim()
@@ -47,10 +66,16 @@ object BoardSerialize : Serializer<Board> {
         }
     }
 
+    /**
+     * Deserializes a string representation of BoardCells into a BoardCells object.
+     * @param cellsString represents the string of BoardCells
+     * @return deserialized BoardCells object.
+     */
+
     private fun deserializeBoardCells(cellsString: String): BoardCells {
 
         val cells = mutableListOf<Pair<Position, Stone>>()
-
+        // Returns an empty map if the cellsString does not contain any Stone
         if(!cellsString.any{it == ':'}) return cells.toMap()
 
         val cellList = cellsString.split(" ")
