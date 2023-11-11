@@ -19,9 +19,8 @@ abstract class Command {
 
 
 /**
- * Creates and returns the list of commands.
+ * Returns the list of commands.
  * @param storage The Storage to load and save files from.
- * @return A map of command names to Command objects
  */
 fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
     return mapOf (
