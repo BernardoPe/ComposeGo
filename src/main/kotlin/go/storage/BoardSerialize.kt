@@ -67,39 +67,3 @@ object BoardSerialize : Serializer<Board> {
 
 
 }
-
-
-fun main() {
-    val cells = mapOf(
-        Position(0, 0) to Stone.BLACK,
-        Position(1, 1) to Stone.WHITE,
-        Position(2, 2) to Stone.BLACK
-        // Add more entries as needed
-    )
-
-    val boardPass = BoardPass(cells, emptyMap(), Stone.BLACK, Points(0, 0))
-    val boardRun = BoardRun(cells, emptyMap(), Stone.WHITE, Points(0, 0))
-    val boardFinish = BoardFinish(cells, Points(10.0, 20.0))
-
-    val boardPassSerialized = BoardSerialize.serialize(boardPass)
-    val boardRunSerialized = BoardSerialize.serialize(boardRun)
-    val boardFinishSerialized = BoardSerialize.serialize(boardFinish)
-
-    println( boardPassSerialized)
-    println("\n")
-    println(boardRunSerialized)
-    println("\n")
-    println(boardFinishSerialized)
-
-    val board1 = BoardSerialize.deserialize(boardPassSerialized)
-    val board2 = BoardSerialize.deserialize(boardRunSerialized)
-    val board3 = BoardSerialize.deserialize(boardFinishSerialized)
-    println(board1)
-    println("\n")
-    println(board2)
-    println("\n")
-    println(board3)
-
-
-
-}

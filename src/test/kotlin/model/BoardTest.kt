@@ -8,8 +8,15 @@ import kotlin.test.*
 
 class BoardTest {
 
-
         @Test
+        fun `test equals boardRun`() {
+            val initialBoard = newBoard()
+            val runBoard = BoardRun(emptyMap(), emptyMap(), Stone.BLACK, Points(0,0))
+            val runBoard2 = BoardRun(mapOf(Position(0) to Stone.BLACK), emptyMap(), Stone.WHITE, Points(2,0))
+
+            assertEquals(runBoard, initialBoard)
+            assertNotEquals(runBoard, runBoard2)
+        }
         fun `create new board`() {
             val initialBoard = newBoard()
             assertIs<BoardRun>(initialBoard)

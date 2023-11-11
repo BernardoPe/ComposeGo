@@ -27,7 +27,7 @@ fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
         "PLAY" to object: Command() {
 
             override fun execute(args: List<String>, game: Board): Board {
-                require(game !is BoardFinish) { "Game Over" }
+                if (game is BoardFinish) error { "Game Over" }
                 val arg = requireNotNull(args.firstOrNull()) { "Missing Position" }
                 val pos = getPosition(arg)
                 require(game.cells[pos] == null) { "Position ${arg.uppercase()} used" }
@@ -53,7 +53,6 @@ fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
 
             override fun execute(args: List<String>, game: Board): Board{
                 require(args.isNotEmpty()) { "Missing name" }
-                requireNotNull( if (game == newBoard()) null else game ){ "Game not started" }
                 val name = args[0]
                 require(name.isNotEmpty()) { "Name must not be empty" }
                 storage.create(name, game)
@@ -67,7 +66,6 @@ fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
                 val name = requireNotNull(args.firstOrNull()) { "Missing name" }
                 return checkNotNull(storage.read(name)) { "Game $name not found" }
             }
-
         },
         "EXIT" to object: Command() {
             override val isToFinish: Boolean = true
