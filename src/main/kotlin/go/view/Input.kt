@@ -1,5 +1,8 @@
 package go.view
 
+/**
+ * Represents a command input and its arguments
+ */
 data class CommandLine  (
     val name : String,
     val args: List<String>

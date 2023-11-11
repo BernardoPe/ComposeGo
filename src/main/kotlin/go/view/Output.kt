@@ -5,6 +5,9 @@ import go.model.*
 fun getColLetters() : List<Char> =  buildList { (0 until BOARD_SIZE.size).forEach{ add('A' + it) } }
 
 
+/**
+ * Outputs the board to stdout
+ */
 fun Board.show() {
     println("   " + getColLetters().joinToString(separator = " "))
     Position.values.forEach { pos ->
@@ -19,8 +22,9 @@ fun Board.show() {
 
     }
     println(when(this) {
-        is BoardPass -> "Player ${turn.other.char} Passes. Turn: ${turn.char} (${turn.name})"
+        is BoardPass -> "Player ${player.other.char} Passes. Turn: ${player.char} (${player.name})"
         is BoardFinish -> "GAME OVER   SCORE: #=${score.black} - O=${score.white}"
-        is BoardRun -> "Turn: ${turn.char} (${turn.name}) Captures: #=${currPoints.black} - O=${currPoints.white}"
+        is BoardRun -> "Turn: ${player.char} (${player.name}) Captures: #=${currPoints.black} - O=${currPoints.white}"
     })
+
 }

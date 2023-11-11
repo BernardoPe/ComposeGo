@@ -6,8 +6,8 @@ import go.model.*
 object BoardSerialize : Serializer<Board> {
     override fun serialize(data: Board): String =
         when (data) {
-            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.white + " "+ data.currPoints.black
-            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.turn + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
             is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
@@ -40,7 +40,7 @@ object BoardSerialize : Serializer<Board> {
                 BoardRun(cells, emptyMap(), turn, points)
             }
             "Finish" -> {
-                val scores = lines[2].split(" ").let { Points(it[0].toFloat(), it[1].toFloat()) }
+                val scores = lines[2].split(" ").let { Points(it[0].toDouble(), it[1].toDouble()) }
                 BoardFinish(cells, scores)
             }
             else -> throw IllegalArgumentException("Invalid board type")
@@ -79,7 +79,7 @@ fun main() {
 
     val boardPass = BoardPass(cells, emptyMap(), Stone.BLACK, Points(0, 0))
     val boardRun = BoardRun(cells, emptyMap(), Stone.WHITE, Points(0, 0))
-    val boardFinish = BoardFinish(cells, Points(10f, 20f))
+    val boardFinish = BoardFinish(cells, Points(10.0, 20.0))
 
     val boardPassSerialized = BoardSerialize.serialize(boardPass)
     val boardRunSerialized = BoardSerialize.serialize(boardRun)

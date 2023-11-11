@@ -11,7 +11,6 @@ package go.model
  */
 @JvmInline
 value class Position private constructor(val index: Int) {
-
     val row: Int get() = index / BOARD_SIZE.size
 
     val col: Int get() = index % BOARD_SIZE.size
@@ -61,12 +60,12 @@ value class Position private constructor(val index: Int) {
 
     private fun computeGroup(position: Position, board: Map<Position, Stone>, player: Stone?, group: Set<Position>): Set<Position> {
 
+        if (position in group || board[position] != player) return group
+
         var newGroup = group + position
 
         position.getAdjacents().forEach {
-            if (it !in group && board[it] == player) {
-                newGroup += computeGroup(it, board, player, newGroup)
-            }
+            newGroup += computeGroup(it, board, player, newGroup)
         }
 
         return newGroup
