@@ -27,7 +27,7 @@ sealed class Board(val cells : BoardCells) {
      *
      * If the game has ended and this function is called, there will be an error.
      * @return A new board with the updated game state
-     *
+     * @throws IllegalArgumentException if the game has already ended
      */
     fun play(pos: Position) : Board {
         return when (this) {

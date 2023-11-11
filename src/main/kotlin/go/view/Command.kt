@@ -19,12 +19,18 @@ abstract class Command {
 
 
 /**
- * Returns the list of commands.
- * @param storage The Storage to laod and save files from.
+ * Creates and returns the list of commands.
+ * @param storage The Storage to load and save files from.
+ * @return A map of command names to Command objects
  */
 fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
     return mapOf (
         "PLAY" to object: Command() {
+
+            /**
+             * @throws IllegalArgumentException if the game has already ended.
+             * @throws IllegalArgumentException if the provided position is invalid or has already been used.
+             */
 
             override fun execute(args: List<String>, game: Board): Board {
                 if (game is BoardFinish) error { "Game Over" }
@@ -51,6 +57,10 @@ fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
         },
         "SAVE" to object: Command() {
 
+            /**
+             * @throws IllegalArgumentException if the name is missing or empty.
+             */
+
             override fun execute(args: List<String>, game: Board): Board{
                 require(args.isNotEmpty()) { "Missing name" }
                 val name = args[0]
@@ -62,6 +72,10 @@ fun getCommands(storage: TextFileStorage<String, Board>) : Map<String,Command> {
 
         },
         "LOAD" to object: Command() {
+
+            /**
+             * @throws IllegalArgumentException if the name is missing or if the specified game is not found.
+             */
             override fun execute(args: List<String>, game : Board): Board {
                 val name = requireNotNull(args.firstOrNull()) { "Missing name" }
                 return checkNotNull(storage.read(name)) { "Game $name not found" }
