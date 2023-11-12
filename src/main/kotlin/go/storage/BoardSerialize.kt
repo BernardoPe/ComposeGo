@@ -76,7 +76,7 @@ object BoardSerialize : Serializer<Board> {
 
         var cells = mapOf<Position, Stone>()
 
-        if(!cellsString.any{it == ':'}) return cells.toMap()
+        if(!cellsString.any{it == ':'}) return cells
 
         val cellList = cellsString.split(" ")
 
@@ -87,7 +87,7 @@ object BoardSerialize : Serializer<Board> {
             cells = cells + (position to stone)
         }
 
-        return cells.toMap()
+        return cells
     }
 
 
