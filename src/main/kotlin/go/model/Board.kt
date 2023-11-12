@@ -25,7 +25,6 @@ sealed class Board(val cells : BoardCells) {
     /**
      * Updates the game state.
      *
-     * If the game has ended and this function is called, there will be an error.
      * @return A new board with the updated game state
      * @throws IllegalArgumentException if the game has already ended
      */
@@ -41,7 +40,7 @@ sealed class Board(val cells : BoardCells) {
      * Passes a turn.
      * @return The same board if the previous turn wasn't a pass, or a Board representing the finished game state
      * if the previous turn was a pass.
-     * If this function is called and the game has ended, there will be an error.
+     * @throws IllegalStateException if the game has already ended
      */
     fun pass() : Board {
         return when(this) {
@@ -70,8 +69,8 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val player : 
     /**
      * Validates a play based on the Go rules.
      * @param pos The played position
-     * @return An error if the play doesn't obey the ko or liberty rules, or a new board with the
-     * updated game state if the play was valid
+     * @return A new board with the updated game state if the play was valid
+     * @throws IllegalArgumentException if the play doesn't obey the Ko or Liberty rules.
      */
     fun validatePlay(pos: Position): Board {
 

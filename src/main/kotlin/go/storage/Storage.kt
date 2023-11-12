@@ -1,7 +1,7 @@
 package go.storage
 
 /**
- * Interface defining basic CRUD operations for a generic key-value storage.
+ * Defines basic operations for key-value storage.
  *
  * @param Key The type of the key for the storage entries.
  * @param Data The type of the data associated with the storage entries.

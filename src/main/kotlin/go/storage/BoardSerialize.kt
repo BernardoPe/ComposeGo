@@ -3,7 +3,7 @@ package go.storage
 import go.model.*
 
 /**
- * Object that implements the Serializer interface
+ * Implements the Serializer interface
  */
 object BoardSerialize : Serializer<Board> {
 
@@ -74,8 +74,8 @@ object BoardSerialize : Serializer<Board> {
 
     private fun deserializeBoardCells(cellsString: String): BoardCells {
 
-        val cells = mutableListOf<Pair<Position, Stone>>()
-        // Returns an empty map if the cellsString does not contain any Stone
+        var cells = mapOf<Position, Stone>()
+
         if(!cellsString.any{it == ':'}) return cells.toMap()
 
         val cellList = cellsString.split(" ")
@@ -84,7 +84,7 @@ object BoardSerialize : Serializer<Board> {
             val (index, stoneStr) = cell.split(":")
             val position = Position(index.toInt())
             val stone = Stone.valueOf(stoneStr)
-            cells.add(position to stone)
+            cells = cells + (position to stone)
         }
 
         return cells.toMap()
