@@ -14,8 +14,8 @@ object BoardSerialize : Serializer<Board> {
      */
     override fun serialize(data: Board): String =
         when (data) {
-            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
-            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardPass -> "Pass\n" + getBoardCellsString(data.cells) + "\n" + getBoardCellsString(data.prevCells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
+            is BoardRun -> "Run\n" + getBoardCellsString(data.cells) + "\n" + getBoardCellsString(data.prevCells) + "\n" + data.player + "\n" + data.currPoints.white + " "+ data.currPoints.black
             is BoardFinish -> "Finish\n" + getBoardCellsString(data.cells) + "\n" + data.score.white +" "+ data.score.black
         }
 
@@ -49,14 +49,16 @@ object BoardSerialize : Serializer<Board> {
 
         return when (type) {
             "Pass" -> {
-                val turn = lines[2].trim().toStone()
-                val points = lines[3].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
-                BoardPass(cells, emptyMap(), turn, points)
+                val prevCells = deserializeBoardCells(lines[2].trim())
+                val turn = lines[3].trim().toStone()
+                val points = lines[4].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
+                BoardPass(cells, prevCells, turn, points)
             }
             "Run" -> {
-                val turn = lines[2].trim().toStone()
-                val points = lines[3].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
-                BoardRun(cells, emptyMap(), turn, points)
+                val prevCells = deserializeBoardCells(lines[2].trim())
+                val turn = lines[3].trim().toStone()
+                val points = lines[4].split(" ").let { Points(it[0].toInt(), it[1].toInt()) }
+                BoardRun(cells, prevCells, turn, points)
             }
             "Finish" -> {
                 val scores = lines[2].split(" ").let { Points(it[0].toDouble(), it[1].toDouble()) }

@@ -44,7 +44,7 @@ fun FrameWindowScope.App(driver: MongoDriver, exitFunction: () -> Unit) {
         Menu("Game") {
             Item("New Game", onClick = vm::showNewGameDialog)
             Item("Join Game", onClick = vm::showJoinGameDialog)
-            Item("Exit", onClick = { vm.exit(); exitFunction() })
+            Item("Exit", onClick = { vm.exit(); driver.close(); exitFunction() })
         }
         Menu("Play") {
             Item("Pass", onClick = vm::passTurn, enabled = vm.isRunning)
