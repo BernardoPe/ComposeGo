@@ -21,8 +21,8 @@ class SerializeTest {
         val boardRun = BoardRun(cells, emptyMap(), Stone.WHITE, Points(5, 0))
         val boardFinish = BoardFinish(cells, Points(10.0, 20.0))
 
-        val expectedPassString = "Pass\n0:BLACK 1:WHITE 2:BLACK\nBLACK\n0 3"
-        val expectedRunString = "Run\n0:BLACK 1:WHITE 2:BLACK\nWHITE\n5 0"
+        val expectedPassString = "Pass\n0:BLACK 1:WHITE 2:BLACK\n\nBLACK\n0 3"
+        val expectedRunString = "Run\n0:BLACK 1:WHITE 2:BLACK\n\nWHITE\n5 0"
         val expectedFinishString = "Finish\n0:BLACK 1:WHITE 2:BLACK\n10.0 20.0"
 
         assertEquals(expectedPassString, serialize(boardPass))
@@ -43,7 +43,7 @@ class SerializeTest {
             Position(44) to Stone.BLACK
         )
 
-        val boardRunSerialized = "Run\n17:BLACK 16:BLACK 25:BLACK 72:WHITE 34:BLACK 18:WHITE 43:BLACK 0:WHITE 44:BLACK\nWHITE\n0 2"
+        val boardRunSerialized = "Run\n17:BLACK 16:BLACK 25:BLACK 72:WHITE 34:BLACK 18:WHITE 43:BLACK 0:WHITE 44:BLACK\n\nWHITE\n0 2"
         val deserialized = deserialize(boardRunSerialized)
         val expectedBoardRun =  BoardRun(board, emptyMap(), Stone.WHITE, Points(0, 2))
         assertEquals(expectedBoardRun, deserialized)

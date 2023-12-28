@@ -10,5 +10,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Go"
+rootProject.name = "go"
 

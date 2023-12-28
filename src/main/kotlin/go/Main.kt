@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -106,14 +105,16 @@ fun DialogBase(
     onDismissRequest = onClose,
     title = { Text(title, style = MaterialTheme.typography.h4) },
     text = content,
-    confirmButton = { TextButton(onClick = onClose) { Text("Close") } }
+    confirmButton = {  TextButton(onClick = onClose , modifier = Modifier.size(50.dp)){
+        Image(painter = painterResource("x.png"), contentDescription = null, contentScale = ContentScale.FillBounds)
+    } }
 )
 
 
 @Composable
 fun ErrorDialog(message: String, onClose: ()->Unit) =
-    DialogBase(message, onClose) {
-        Text(message, style = MaterialTheme.typography.body1)
+    DialogBase("", onClose) {
+        Text(message, style = MaterialTheme.typography.h6)
     }
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
