@@ -126,7 +126,9 @@ class BoardPass(cells : BoardCells, prevCells: BoardCells, turn: Stone, currPoin
  * @property cells The moves made in the game
  * @property score The final game score
  */
-class BoardFinish(cells : BoardCells, val score : Points<Double>) : Board(cells)
+class BoardFinish(cells : BoardCells, val score : Points<Double>) : Board(cells) {
+    val winner get() = if (score.black > score.white) Stone.BLACK else if (score.black < score.white) Stone.WHITE else null
+}
 
 /**
  * Creates a new Go Board.
