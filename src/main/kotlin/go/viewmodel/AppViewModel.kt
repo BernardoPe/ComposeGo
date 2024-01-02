@@ -13,13 +13,13 @@ import kotlinx.coroutines.*
 class AppViewModel(driver: MongoDriver, val scope: CoroutineScope) {
 
     private val storage = MongoStorage<String, Board>("games", driver, BoardSerialize)
-    private var clash by mutableStateOf( Clash(storage))
+    private var clash by mutableStateOf(Clash(storage))
 
     var viewLast by mutableStateOf(false)
         private set
     var inputName by mutableStateOf<InputName?>(null)
         private set
-    var errorMessage by mutableStateOf<String?>(null) //ErrorDialog state
+    var errorMessage by mutableStateOf<String?>(null)
         private set
 
     private var waitingJob by mutableStateOf<Job?>(null)
@@ -113,7 +113,7 @@ class AppViewModel(driver: MongoDriver, val scope: CoroutineScope) {
                 try { clash = clash.refreshClash() }
                 catch (e: NoChangesException) {  }
                 catch (e: Exception) {
-                    errorMessage = e.message
+                    errorMessage = "The game was terminated"
                     if (e is GameDeletedException) clash = Clash(storage)
                 }
             } while (!turnAvailable)

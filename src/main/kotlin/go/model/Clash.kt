@@ -36,7 +36,7 @@ fun Clash.pass(): Clash {
 fun Clash.startClash(name: String): Clash {
     val game = go.model.newBoard()
     gs.create(name, game)
-    return ClashRun( gs, name, Stone.BLACK, game)
+    return ClashRun(gs, name, Stone.BLACK, game)
 }
 
 fun Clash.joinClash(name: String): Clash {

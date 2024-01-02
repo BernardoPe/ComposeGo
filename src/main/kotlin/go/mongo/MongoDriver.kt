@@ -11,7 +11,7 @@ import java.io.Closeable
 
 
 private const val ENV_CONNECTION = "MONGO_CONNECTION"
-
+//mongodb+srv://g3:rUz8LG6davatWswS@go.f8pwevf.mongodb.net/?retryWrites=true&w=majority
 class MongoDriver(nameDb: String? = null) : Closeable {
     val db: MongoDatabase
     private val client: MongoClient

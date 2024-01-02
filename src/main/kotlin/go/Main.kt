@@ -123,7 +123,8 @@ fun StartOrJoinDialog(
     onCancel: ()->Unit,
     onAction: (String)->Unit) {
 
-    var name by remember { mutableStateOf("") }  // Name in edition
+    var name by remember { mutableStateOf("") }
+
     AlertDialog(
         title = { Text("${type.txt} Game") },
         onDismissRequest = onCancel,
@@ -145,6 +146,7 @@ fun StartOrJoinDialog(
             }
         }
     )
+
 }
 
 
