@@ -31,6 +31,7 @@ class SerializeTest {
     }
     @Test
     fun testDeserialize(){
+
         val board = mapOf(
             Position(17) to Stone.BLACK,
             Position(16) to Stone.BLACK,

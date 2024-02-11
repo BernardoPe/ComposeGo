@@ -74,9 +74,10 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val player : 
      */
     fun validatePlay(pos: Position): Board {
 
+        require(cells[pos] == null) { "Position used" }
+
         val newCells = cells + (pos to player)
         val group = pos.getPosGroup(newCells, player)
-
 
         var cellsAfterCaptures = newCells
         var pointsAfterCaptures = currPoints
@@ -102,6 +103,14 @@ open class BoardRun(cells: BoardCells, val prevCells : BoardCells, val player : 
         return if(cellsAfterCaptures.size == BOARD_SIZE.size * BOARD_SIZE.size) BoardFinish(cellsAfterCaptures, calculateFinalScore(cells, pointsAfterCaptures))
         else BoardRun(cellsAfterCaptures, cells, player.other, pointsAfterCaptures)
 
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + prevCells.hashCode()
+        result = 31 * result + player.hashCode()
+        result = 31 * result + currPoints.hashCode()
+        return result
     }
 
 }

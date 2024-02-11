@@ -1,7 +1,6 @@
 package model
 
 import go.model.*
-import go.view.show
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 import kotlin.test.*
@@ -17,6 +16,8 @@ class BoardTest {
             assertEquals(runBoard, initialBoard)
             assertNotEquals(runBoard, runBoard2)
         }
+
+        @Test
         fun `create new board`() {
             val initialBoard = newBoard()
             assertIs<BoardRun>(initialBoard)

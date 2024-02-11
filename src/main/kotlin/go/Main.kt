@@ -43,7 +43,7 @@ fun FrameWindowScope.App(driver: MongoDriver, exitFunction: () -> Unit) {
         Menu("Game") {
             Item("New Game", onClick = vm::showNewGameDialog)
             Item("Join Game", onClick = vm::showJoinGameDialog)
-            Item("Exit", onClick = { vm.exit(); driver.close(); exitFunction() })
+            Item("Exit", onClick = { vm.exit(); exitFunction() })
         }
         Menu("Play") {
             Item("Pass", onClick = vm::passTurn, enabled = vm.isRunning)
@@ -75,10 +75,15 @@ fun FrameWindowScope.App(driver: MongoDriver, exitFunction: () -> Unit) {
                     type = InputName.CAPTURES,
                     closeDialog = vm::cancelInput,
                 )
-                else -> StartOrJoinDialog(
+                InputName.NEW -> StartOrJoinDialog(
                     type = it,
                     onCancel = vm::cancelInput,
-                    onAction = if(it==InputName.NEW) vm::newGame else vm::joinGame
+                    onAction = vm::newGame
+                )
+                InputName.JOIN -> StartOrJoinDialog(
+                    type = it,
+                    onCancel = vm::cancelInput,
+                    onAction = vm::joinGame
                 )
             }
 
@@ -227,7 +232,6 @@ fun StatusBar(board: Board?, me: Stone?) =
 
 @Composable
 fun BoardView(boardCells: BoardCells?, viewLast : Boolean, lastPlay: Position?, onClick: (Position)->Unit) =
-
     Column(
         modifier = Modifier
             .size(BOARD_SIDE)
@@ -236,71 +240,79 @@ fun BoardView(boardCells: BoardCells?, viewLast : Boolean, lastPlay: Position?, 
                 contentScale = ContentScale.FillBounds
             )
     ) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth().height(CELL_SIDE),
-        ) {
-            Spacer(modifier = Modifier.width(CELL_SIDE))
-            repeat(BOARD_SIZE.size) { col ->
-                Text(
-                    text = ('A' + col).toString(),
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(CELL_SIDE).height(CELL_SIDE).wrapContentWidth(align = Alignment.CenterHorizontally).wrapContentHeight(Alignment.Bottom),
-                )
-            }
-        }
-
-
-        repeat(BOARD_SIZE.size){ row ->
-            Row(
-                modifier = Modifier.fillMaxWidth().height(CELL_SIDE),
-            ){
-
-                Text(
-                    text = (BOARD_SIZE.size - row).toString(),
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    modifier = Modifier.width(CELL_SIDE).height(CELL_SIDE).wrapContentWidth(align = Alignment.CenterHorizontally).wrapContentHeight(Alignment.CenterVertically),
-                    textAlign = TextAlign.Center
-                )
-
-                repeat(BOARD_SIZE.size){ col ->
-
-                    val pos = Position(row, col)
-
-                    Box( modifier =  Modifier.size(CELL_SIDE).background(color = Color.Transparent))
-                    {
-                        IntersectionPoint(pos)
-                        Cell(
-                            boardCells?.get(pos),
-                            highlight = viewLast && pos == lastPlay,
-                            onClick = { onClick(pos)},
-                        )
-                    }
-
-
-                }
-            }
-        }
-
-
+        DrawCols()
+        Grid(boardCells, viewLast, lastPlay, onClick)
     }
 
+@Composable
+fun Grid(boardCells: BoardCells?, viewLast : Boolean, lastPlay: Position?, onClick: (Position)->Unit) {
+    repeat(BOARD_SIZE.size){ row ->
+        Row(
+            modifier = Modifier.fillMaxWidth().height(CELL_SIDE),
+        ){
+            RowText(row)
+            repeat(BOARD_SIZE.size){ col ->
+                DrawCell(boardCells, row, col, viewLast, lastPlay, onClick)
+            }
+        }
+    }
+}
+
+@Composable
+fun DrawCell(boardCells: BoardCells?, row: Int, col : Int, viewLast : Boolean, lastPlay: Position?, onClick: (Position)->Unit) {
+    val pos = Position(row, col)
+    Box( modifier =  Modifier.size(CELL_SIDE).background(color = Color.Transparent))
+    {
+        IntersectionPoint(pos)
+        Cell(
+            boardCells?.get(pos),
+            highlight = viewLast && pos == lastPlay,
+            onClick = { onClick(pos)},
+        )
+    }
+}
+
+@Composable
+fun RowText(row : Int) {
+    Text(
+        text = (BOARD_SIZE.size - row).toString(),
+        fontWeight = FontWeight.Bold,
+        color = Color.Black,
+        fontSize = 20.sp,
+        modifier = Modifier.width(CELL_SIDE).height(CELL_SIDE).wrapContentWidth(align = Alignment.CenterHorizontally).wrapContentHeight(Alignment.CenterVertically),
+        textAlign = TextAlign.Center
+    )
+}
+
+
+@Composable
+fun DrawCols() {
+    Row(
+        modifier = Modifier.fillMaxWidth().height(CELL_SIDE),
+    ) {
+        Spacer(modifier = Modifier.width(CELL_SIDE))
+        repeat(BOARD_SIZE.size) { col ->
+            Text(
+                text = ('A' + col).toString(),
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(CELL_SIDE).height(CELL_SIDE).wrapContentWidth(align = Alignment.CenterHorizontally).wrapContentHeight(Alignment.Bottom),
+            )
+        }
+    }
+}
 
 
 @Composable
 fun Cell(player: Stone?, highlight: Boolean = false, size: Dp = CELL_SIDE, onClick: ()->Unit={}){
-
 
     val modifier = if(highlight) Modifier.size(size).background(color = Color.Transparent).border(width = 1.dp, color = Color.Red)
                    else Modifier.size(size).background(color = Color.Transparent)
 
     if(player == null) {
         Box(modifier.clickable(onClick = onClick))
-    }else {
+    } else {
         val filename = when (player) {
             Stone.BLACK -> "blackStone.png"
             Stone.WHITE -> "whiteStone.png"
