@@ -9,6 +9,7 @@ import com.mongodb.kotlin.client.MongoCollection
 import com.mongodb.kotlin.client.MongoDatabase
 import java.io.Closeable
 
+
 private const val ENV_CONNECTION = "MONGO_CONNECTION"
 class MongoDriver(nameDb: String? = null) : Closeable {
     val db: MongoDatabase

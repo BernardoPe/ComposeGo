@@ -1,12 +1,7 @@
 package go.view
 
 import go.model.*
-import go.storage.Storage
 import go.storage.TextFileStorage
-import java.util.*
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
-
 
 
 
@@ -49,7 +44,6 @@ object Play : Command() {
         return game.play(pos)
     }
 
-
 }
 object Pass : Command() {
     override fun execute(args: List<String>, game : Board): Board {
@@ -85,6 +79,7 @@ object Load: Command() {
 
 
 }
+
 object Save : Command() {
 
     /**
@@ -111,4 +106,10 @@ object Save : Command() {
 object Exit : Command() {
     override val isToFinish: Boolean = true
 }
+
+
+
+
+
+
 

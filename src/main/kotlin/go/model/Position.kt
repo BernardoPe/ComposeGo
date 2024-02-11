@@ -11,7 +11,6 @@ package go.model
  */
 @JvmInline
 value class Position private constructor(val index: Int) {
-
     val row: Int get() = index / BOARD_SIZE.size
 
     val col: Int get() = index % BOARD_SIZE.size
@@ -47,7 +46,7 @@ value class Position private constructor(val index: Int) {
      */
     fun getAdjacents(): List<Position> {
         var adjacents = listOf<Position>()
-        Direction.values().forEach {
+        Direction.entries.forEach {
             val adjPos = this + it
             if (adjPos != null) adjacents = adjacents + adjPos
         }
@@ -61,15 +60,15 @@ value class Position private constructor(val index: Int) {
 
     private fun computeGroup(position: Position, board: Map<Position, Stone>, player: Stone?, group: Set<Position>): Set<Position> {
 
-        val newGroup = group + position
+        if (position in group || board[position] != player) return group
+
+        var newGroup = group + position
 
         position.getAdjacents().forEach {
-            if (it !in group && board[it] == player)
-                return computeGroup(it, board, player, newGroup)
+            newGroup += computeGroup(it, board, player, newGroup)
         }
 
         return newGroup
-
     }
 
 
@@ -96,15 +95,16 @@ fun isValidCol(ch: Char): Boolean = ch in 'A' until 'A' + BOARD_SIZE.size
 
 
 /**
- * Checks if the provided [ch] is a valid column.
- * @param ch A character representing a grid column.
+ * Checks if the provided [num] is a valid column.
+ * @param num An Integer representing a grid row.
  */
 fun isValidRow(num: Int): Boolean = num - 1 in 0 until BOARD_SIZE.size
 
 
 /**
- * Checks if the provided [ch] is a valid column.
- * @param ch A character representing a grid column.
+ * Checks if the provided [col] and [row] values are from a valid position on the game board.
+ * @param col The column value.
+ * @param row The row value.
  */
 fun isValidPos(col: Int, row: Int): Boolean = col in 0 until BOARD_SIZE.size && row in 0 until BOARD_SIZE.size
 
@@ -112,6 +112,8 @@ fun isValidPos(col: Int, row: Int): Boolean = col in 0 until BOARD_SIZE.size && 
 /**
  * Returns the column index represented by [ch]
  * @param ch The character representing a column position in the grid
+ * @return index of the column in the game board.
+ * @throws IllegalArgumentException if the provided column is not valid.
  */
 fun getColIndex(ch: Char): Int {
     require(isValidCol(ch)) { "Column not valid" }
@@ -120,7 +122,9 @@ fun getColIndex(ch: Char): Int {
 
 /**
  * Returns the col index represented by [num]
- * @param num The number representing a row position in the grid
+ * @param num The number representing a row position in the grid.
+ * @return index of the row in the game board.
+ * @throws IllegalArgumentException if the provided row is not valid.
  */
 fun getRowIndex(num: Int): Int {
     require(isValidRow(num)) { "Row not valid" }
@@ -129,8 +133,10 @@ fun getRowIndex(num: Int): Int {
 
 
 /**
- * Returns the position from [str]
+ * Returns the position from a [str]
  * @param str A string of characters containing the grid position.
+ * @return The position object corresponding to the input string.
+ * @throws IllegalArgumentException if the input string is not a valid position.
  */
 fun getPosition(str: String): Position {
     if (BOARD_SIZE.size <= 9) {
